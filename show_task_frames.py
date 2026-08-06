@@ -17,8 +17,12 @@ class ShowTasksFrame(CTkFrame):
         self.columnconfigure(0, weight=12)
         self.columnconfigure(1, weight=1)
 
-        self.subject_label = CTkLabel(self, text="tasks(to remove u must double click")
-        self.subject_label.grid(column=0, row=0, sticky="nsew", pady=10)
+        self.search_input = CTkEntry(
+            self, corner_radius=25, placeholder_text="search the task", width=580
+        )
+        self.search_input.grid(column=0, row=0, sticky="ns", pady=10)
+
+        self.search_input.bind('<KeyRelease>', self.search)
 
         self.add_button = CTkButton(self, text="+", command=self.open_add)
         self.add_button.grid(column=1, row=0, sticky="e", pady=10)
@@ -71,3 +75,17 @@ class ShowTasksFrame(CTkFrame):
             del self.task_widgets[removed_task_id]
 
         self.refresh_tasks()
+
+    def search(self, e):
+        text = self.search_input.get().lower().strip()
+
+        row = 1
+
+        for task in self.task_widgets.values():
+            if text in task.task_text.lower():
+                task.grid(row=row, column=0, padx=10, pady=5, sticky='nsew')
+
+                row += 1
+
+            else:
+                task.grid_forget()
