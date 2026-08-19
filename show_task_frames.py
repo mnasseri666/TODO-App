@@ -1,6 +1,7 @@
 from customtkinter import *
 
 from add_task import AddTask
+from dashboard import DashboardTopLevel
 from task_frame import TaskFrame
 from tasks_database import TasksDatabase
 
@@ -14,18 +15,26 @@ class ShowTasksFrame(CTkFrame):
         self.username = username
 
         # column configure
-        self.columnconfigure(0, weight=12)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=12)
+        self.columnconfigure(2, weight=1)
 
         self.search_input = CTkEntry(
             self, corner_radius=25, placeholder_text="search the task", width=580
         )
-        self.search_input.grid(column=0, row=0, sticky="ns", pady=10)
+        self.search_input.grid(column=1, row=0, sticky="ns", pady=10)
 
-        self.search_input.bind('<KeyRelease>', self.search)
+        self.search_input.bind("<KeyRelease>", self.search)
 
         self.add_button = CTkButton(self, text="+", command=self.open_add)
-        self.add_button.grid(column=1, row=0, sticky="e", pady=10)
+        self.add_button.grid(column=2, row=0, sticky="e", pady=10, padx=(0, 10))
+
+        self.open_dashboard_btn = CTkButton(
+            self, text="open beta dashboard", command=self.open_dashboard
+        )
+        self.open_dashboard_btn.grid(column=0, row=0)
+
+        self.dashboard_root = None
 
         self.task_widgets = {}
         self.load_tasks()
@@ -61,7 +70,9 @@ class ShowTasksFrame(CTkFrame):
             task_frame = TaskFrame(
                 self, task_id, task_text, about_task, self, self.handle_task_removal
             )
-            task_frame.grid(column=0, row=row_index, pady=5, padx=10, sticky="nsew")
+            task_frame.grid(
+                column=0, columnspan=3, row=row_index, pady=5, padx=20, sticky="nsew"
+            )
 
             self.task_widgets[task_id] = task_frame
 
@@ -83,9 +94,17 @@ class ShowTasksFrame(CTkFrame):
 
         for task in self.task_widgets.values():
             if text in task.task_text.lower():
-                task.grid(row=row, column=0, padx=10, pady=5, sticky='nsew')
+                task.grid(
+                    row=row, column=0, columnspan=3, padx=20, pady=5, sticky="nsew"
+                )
 
                 row += 1
 
             else:
                 task.grid_forget()
+
+    def open_dashboard(self):
+        if self.dashboard_root is None or not self.dashboard_root.winfo_exists():
+            self.dashboard_root = DashboardTopLevel(self, username=self.username)
+        else:
+            self.dashboard_root.focus()
