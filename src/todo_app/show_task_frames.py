@@ -1,16 +1,17 @@
 from customtkinter import *
 
-from add_task import AddTask
-from dashboard import DashboardTopLevel
-from task_frame import TaskFrame
-from tasks_database import TasksDatabase
+from todo_app.add_task import AddTask
+from todo_app.dashboard import DashboardTopLevel
+from todo_app.database.tasks_database import TasksDatabase
+from todo_app.paths import get_database_path
+from todo_app.task_frame import TaskFrame
 
 
 class ShowTasksFrame(CTkFrame):
     def __init__(self, master, username, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-        self.__db = TasksDatabase("database.db", username)
+        self.__db = TasksDatabase(get_database_path(), username)
 
         self.username = username
 
@@ -42,8 +43,14 @@ class ShowTasksFrame(CTkFrame):
         self.add_root = None
 
     def open_add(self):
+        if self.dashboard_root is not None:
+            self.dashboard_root.destroy()
+
         if self.add_root is None or not self.add_root.winfo_exists():
             self.add_root = AddTask(self, username=self.username)
+            self.add_root.focus_force()
+            self.add_root.lift()
+
         else:
             self.add_root.focus_force()
             self.add_root.lift()
@@ -68,7 +75,13 @@ class ShowTasksFrame(CTkFrame):
             about_task = task[3]
 
             task_frame = TaskFrame(
-                self, task_id, task_text, about_task, self, self.handle_task_removal
+                self,
+                task_id,
+                task_text,
+                about_task,
+                self,
+                self.handle_task_removal,
+                self.username,
             )
             task_frame.grid(
                 column=0, columnspan=3, row=row_index, pady=5, padx=20, sticky="nsew"
@@ -106,5 +119,6 @@ class ShowTasksFrame(CTkFrame):
     def open_dashboard(self):
         if self.dashboard_root is None or not self.dashboard_root.winfo_exists():
             self.dashboard_root = DashboardTopLevel(self, username=self.username)
+
         else:
             self.dashboard_root.focus()

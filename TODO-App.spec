@@ -2,8 +2,8 @@
 
 
 a = Analysis(
-    ['login.py'],
-    pathex=[],
+    ['src/todo_app/login.py'],
+    pathex=['src'],
     binaries=[],
     datas=[],
     hiddenimports=[],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='AppRunner',
+    name='TODO-App',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

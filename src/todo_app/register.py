@@ -4,7 +4,8 @@ from tkinter.messagebox import showerror, showinfo
 
 from customtkinter import *
 
-from userdatabase import UserDatabase
+from todo_app.database.userdatabase import UserDatabase
+from todo_app.paths import get_database_path
 
 
 class Register(CTkToplevel):
@@ -23,7 +24,7 @@ class Register(CTkToplevel):
 
         self.pass_all_check = None
 
-        self.__user_db = UserDatabase("database.db")
+        self.__user_db = UserDatabase(get_database_path())
 
         # column configure
         self.grid_columnconfigure(0, weight=1)

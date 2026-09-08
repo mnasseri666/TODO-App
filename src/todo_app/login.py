@@ -2,10 +2,11 @@ from tkinter.messagebox import showerror, showinfo
 
 from customtkinter import *
 
-from mainApp import MainApp
-from register import Register
-from tasks_database import TasksDatabase
-from userdatabase import UserDatabase
+from todo_app.database.tasks_database import TasksDatabase
+from todo_app.database.userdatabase import UserDatabase
+from todo_app.mainApp import MainApp
+from todo_app.paths import get_database_path
+from todo_app.register import Register
 
 
 class Login(CTk):
@@ -15,7 +16,7 @@ class Login(CTk):
         self.geometry("500x600")
         self.title("login")
 
-        self.__user_db = UserDatabase("database.db")
+        self.__user_db = UserDatabase(get_database_path())
 
         # column configure
         self.grid_columnconfigure(0, weight=1)
@@ -64,7 +65,7 @@ class Login(CTk):
                 showinfo("logged in", "u log in successfully!!!")
                 self.withdraw()
 
-                self.__task_db = TasksDatabase("database.db", username)
+                self.__task_db = TasksDatabase(get_database_path(), username)
 
                 main_app_root = MainApp(username)
                 main_app_root.mainloop()
@@ -79,6 +80,10 @@ class Login(CTk):
             showerror("error", "ur username or pass is wrong")
 
 
+def main():
+    app = Login()
+    app.mainloop()
+
+
 if __name__ == "__main__":
-    root = Login()
-    root.mainloop()
+    main()

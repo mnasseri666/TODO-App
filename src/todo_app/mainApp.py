@@ -1,7 +1,6 @@
 from customtkinter import *
 
-from show_task_frames import ShowTasksFrame
-from tasks_database import TasksDatabase
+from todo_app.show_task_frames import ShowTasksFrame
 
 
 class MainApp(CTk):
@@ -14,8 +13,6 @@ class MainApp(CTk):
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-
-        self.__db = TasksDatabase("database.db")
 
         self.show_task_frames = ShowTasksFrame(
             self, border_color="black", border_width=3, username=username

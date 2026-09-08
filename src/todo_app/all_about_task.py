@@ -3,7 +3,8 @@ from tkinter.messagebox import showerror, showinfo
 from customtkinter import *
 from openai import OpenAI
 
-from tasks_database import TasksDatabase
+from todo_app.database.tasks_database import TasksDatabase
+from todo_app.paths import get_database_path
 
 
 class AllAboutTask(CTkToplevel):
@@ -14,7 +15,7 @@ class AllAboutTask(CTkToplevel):
 
         self.geometry("500x500")
 
-        self.__db = TasksDatabase("database.db")
+        self.__db = TasksDatabase(get_database_path())
 
         self.task_text = task
         self.about_task = about_task

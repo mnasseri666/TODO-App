@@ -2,7 +2,8 @@ from tkinter.messagebox import showerror, showinfo
 
 from customtkinter import *
 
-from tasks_database import TasksDatabase
+from todo_app.database.tasks_database import TasksDatabase
+from todo_app.paths import get_database_path
 
 
 class AddTask(CTkToplevel):
@@ -14,7 +15,7 @@ class AddTask(CTkToplevel):
         self.show_task_frame = show_task_frame_instance
         self.username = username
 
-        self.__db = TasksDatabase("database.db")
+        self.__db = TasksDatabase(get_database_path())
         self.main_frame = CTkFrame(self)
 
         self.task_input = CTkEntry(
