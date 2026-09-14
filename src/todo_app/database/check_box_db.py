@@ -75,7 +75,15 @@ class CheckBoxDb:
 
     def read_all(self):
         with sql.connect(self.filename) as conn:
-            cursor = conn.execute(
-                "SELECT * FROM checkbox_status"
-            )
+            cursor = conn.execute("SELECT * FROM checkbox_status")
             return cursor.fetchall()
+
+    def delete_task(self, task_id):
+        with sql.connect(self.filename) as conn:
+            conn.execute(
+                """
+                DELETE FROM checkbox_status
+                WHERE task_id = ?
+                """,
+                (task_id,),
+            )

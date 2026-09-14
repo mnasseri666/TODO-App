@@ -40,9 +40,11 @@ class AddTask(CTkToplevel):
 
     def add(self):
         task = self.task_input.get()
-        about_task = self.all_task_input.get("0.0", "end")
+        about_task = self.all_task_input.get("0.0", "end-1c").strip()
 
         if task.replace(" ", ""):
+            if about_task == self.place_holder_task:
+                about_task = ""
             self.__db.add(task, about_task, self.username)
             showinfo("ok", "ur task insert successfully!!!!")
             self.task_input.delete(0, "end")
@@ -68,6 +70,8 @@ class AddTask(CTkToplevel):
             self.all_task_input.delete("0.0", "end")
 
     def task_focus_out(self, e):
-        if self.all_task_input.get("0.0", "end-1c") == "":
-            if len(self.all_task_input.get("0.0", "end").strip()) == 0:
-                self.all_task_input.insert("0.0", self.place_holder_task)
+        if (
+            self.all_task_input.get("0.0", "end-1c") == ""
+            and len(self.all_task_input.get("0.0", "end").strip()) == 0
+        ):
+            self.all_task_input.insert("0.0", self.place_holder_task)

@@ -118,7 +118,11 @@ class ShowTasksFrame(CTkFrame):
 
     def open_dashboard(self):
         if self.dashboard_root is None or not self.dashboard_root.winfo_exists():
-            self.dashboard_root = DashboardTopLevel(self, username=self.username)
+            self.dashboard_root = DashboardTopLevel(
+                self,
+                username=self.username,
+                main_app=self.master,
+            )
 
         else:
             self.dashboard_root.focus()
