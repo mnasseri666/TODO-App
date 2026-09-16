@@ -31,7 +31,7 @@ class ShowTasksFrame(CTkFrame):
         self.add_button.grid(column=2, row=0, sticky="e", pady=10, padx=(0, 10))
 
         self.open_dashboard_btn = CTkButton(
-            self, text="open beta dashboard", command=self.open_dashboard
+            self, text="open dashboard", command=self.open_dashboard
         )
         self.open_dashboard_btn.grid(column=0, row=0)
 
@@ -118,7 +118,11 @@ class ShowTasksFrame(CTkFrame):
 
     def open_dashboard(self):
         if self.dashboard_root is None or not self.dashboard_root.winfo_exists():
-            self.dashboard_root = DashboardTopLevel(self, username=self.username)
+            self.dashboard_root = DashboardTopLevel(
+                self,
+                username=self.username,
+                main_app=self.master,
+            )
 
         else:
             self.dashboard_root.focus()

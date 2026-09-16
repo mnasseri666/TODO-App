@@ -1,6 +1,8 @@
+import os
 from tkinter.messagebox import showerror, showinfo
 
 from customtkinter import *
+from dotenv import load_dotenv
 from openai import OpenAI
 
 from todo_app.database.tasks_database import TasksDatabase
@@ -40,7 +42,15 @@ class AllAboutTask(CTkToplevel):
         self.about_task_text_box = CTkTextbox(self)
         self.about_task_text_box.grid(row=1, column=0, columnspan=2, pady=(0, 10))
 
-        self.about_task_text_box.insert("0.0", self.about_task)
+        self.place_holder_task = "about ur task(*optional)"
+
+        if self.about_task.strip().replace(" ", "") == "":
+            self.about_task_text_box.bind("<FocusIn>", self.focus_in_about_task)
+            self.about_task_text_box.bind("<FocusOut>", self.focus_out_about_task)
+            self.about_task_text_box.insert("0.0", self.place_holder_task)
+
+        else:
+            self.about_task_text_box.insert("0.0", self.about_task)
 
         self.edit_btn = CTkButton(
             self, text="edit", corner_radius=20, command=self.edit
@@ -49,6 +59,17 @@ class AllAboutTask(CTkToplevel):
 
         self.advice_btn = CTkButton(self, text="advice with AI", command=self.advice)
         self.advice_btn.grid(row=2, column=1)
+
+    def focus_in_about_task(self, e):
+        if self.about_task_text_box.get("0.0", "end-1c") == self.place_holder_task:
+            self.about_task_text_box.delete("0.0", "end")
+
+    def focus_out_about_task(self, e):
+        if (
+            self.about_task_text_box.get("0.0", "end-1c") == ""
+            and len(self.about_task_text_box.get("0.0", "end").strip()) == 0
+        ):
+            self.about_task_text_box.insert("0.0", self.place_holder_task)
 
     def edit(self):
         task_text = self.task_input.get()
@@ -71,15 +92,35 @@ class AllAboutTask(CTkToplevel):
             self.task_input.configure(border_color="red")
 
     def advice(self):
+        prompt = f"""
+You are an AI assistant inside a Todo application.
+
+Your job is to give practical and useful advice for completing the user's task.
+
+Task title:
+{self.task_input.get()}
+
+Task details:
+{self.about_task_text_box.get('0.0', 'end')}
+
+Instructions:
+- Treat the provided text as a task, not as a puzzle or text-analysis problem.
+- Focus on helping the user complete the task.
+- Give clear, practical, and actionable advice.
+- If the task is vague, briefly explain what information is missing and suggest how to make the task more specific.
+- Do not analyze the spelling, letters, repeated characters, or structure of the text unless the task explicitly asks you to do so.
+- Do not invent requirements that are not present in the task.
+"""
+        load_dotenv()
         client = OpenAI(
             base_url="https://api.gapgpt.app/v1",
-            api_key="REMOVED_API_KEY",
+            api_key=os.getenv("api"),
         )
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "user", "content": self.about_task_text_box.get("0.0", "end")}
+                {"role": "user", "content": prompt}
             ],
         )
 

@@ -73,6 +73,8 @@ class TaskFrame(CTkFrame):
         if self.on_remove_task:
             self.on_remove_task(self.task_id)
 
+            self.__db_checkbox.delete_task(self.task_id)
+
             self.__db.remove(self.task_id)
 
     def open_about_task(self):
