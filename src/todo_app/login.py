@@ -67,28 +67,23 @@ class Login(CTk):
         username = self.username_input.get()
         password = self.user_pass_input.get()
 
-        db_values = self.__user_db.get_all_db()
+        if self.__user_db.check_password(username, password):
+            showinfo("logged in", "u log in successfully!!!")
 
-        for user in db_values:
-            if username == user[0] and password == user[2]:
-                showinfo("logged in", "u log in successfully!!!")
+            self.user_pass_input.delete(0, "end")
+            self.username_input.delete(0, "end")
 
-                self.user_pass_input.delete(0, "end")
-                self.username_input.delete(0, "end")
+            self.withdraw()
 
-                self.withdraw()
+            self.__task_db = TasksDatabase(
+                get_database_path(),
+                username,
+            )
 
-                self.__task_db = TasksDatabase(
-                    get_database_path(),
-                    username,
-                )
-
-                self.main_app_root = MainApp(
-                    self,
-                    username,
-                )
-
-                break
+            self.main_app_root = MainApp(
+                self,
+                username,
+            )
 
         else:
             showerror("error", "ur username or pass is wrong")

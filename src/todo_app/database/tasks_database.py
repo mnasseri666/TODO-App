@@ -15,7 +15,7 @@ class TasksDatabase:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS task (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username NVARCHAR(30),
+                    username TEXT NOT NULL,
                     text NVARCHAR(30) NOT NULL,
                     about_text NVARCHAR(100)
                 );
@@ -34,8 +34,8 @@ class TasksDatabase:
     def remove(self, task_id):
         with connect(self.filename, timeout=10) as conn:
             conn.execute(
-                "DELETE FROM task WHERE id = ?",
-                (task_id,),
+                "DELETE FROM task WHERE id = ? AND username = ?",
+                (task_id, self.username),
             )
 
     def read_all(self):
@@ -46,8 +46,8 @@ class TasksDatabase:
     def get_text_by_id(self, task_id):
         with connect(self.filename) as conn:
             cursor = conn.execute(
-                "SELECT text FROM task WHERE id = ?",
-                (task_id,),
+                "SELECT text FROM task WHERE id = ? AND username = ?",
+                (task_id, self.username),
             )
             return cursor.fetchone()
 
@@ -57,9 +57,9 @@ class TasksDatabase:
                 """
                 UPDATE task
                 SET text = ?, about_text = ?
-                WHERE id = ?
+                WHERE id = ? AND username = ?
                 """,
-                (text, about_text, task_id),
+                (text, about_text, task_id, self.username),
             )
 
     def read_user_tasks(self):

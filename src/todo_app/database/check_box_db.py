@@ -17,9 +17,9 @@ class CheckBoxDb:
                 """
                 CREATE TABLE IF NOT EXISTS checkbox_status (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    task_id INT NOT NULL UNIQUE,
+                    task_id INT UNIQUE,
                     username NVARCHAR(30) NOT NULL,
-                    finished INT
+                    finished INTEGER NOT NULL DEFAULT 0 CHECK (finished IN (0, 1))
                 );
                 """
             )
@@ -57,9 +57,9 @@ class CheckBoxDb:
                 """
                 UPDATE checkbox_status
                 SET finished = 1
-                WHERE task_id = ?
+                WHERE task_id = ? AND username = ?
                 """,
-                (task_id,),
+                (task_id, self.username),
             )
 
     def remove_checked(self, task_id):
@@ -68,9 +68,9 @@ class CheckBoxDb:
                 """
                 UPDATE checkbox_status
                 SET finished = 0
-                WHERE task_id = ?
+                WHERE task_id = ? AND username = ?
                 """,
-                (task_id,),
+                (task_id, self.username),
             )
 
     def read_all(self):
@@ -83,7 +83,7 @@ class CheckBoxDb:
             conn.execute(
                 """
                 DELETE FROM checkbox_status
-                WHERE task_id = ?
+                WHERE task_id = ? AND username = ?
                 """,
-                (task_id,),
+                (task_id, self.username),
             )

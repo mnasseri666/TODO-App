@@ -10,6 +10,7 @@ class DashboardTopLevel(CTkToplevel):
         super().__init__(*args, **kwargs)
 
         self.main_app = main_app
+        self.username = username
 
         self.title("Dashboard")
         self.geometry("650x500")
@@ -24,16 +25,10 @@ class DashboardTopLevel(CTkToplevel):
             username,
         )
 
-        self.checked_or_not = [
-            _[3] for _ in self.__db_checkbox.read_all() if _[2] == username
-        ]
-
-        # column configure
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
 
-        # row configure
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
 
@@ -96,14 +91,6 @@ class DashboardTopLevel(CTkToplevel):
             pady=(0, 10),
         )
 
-        self.checked = len([_ for _ in self.checked_or_not if _ == 1])
-
-        self.make_lbl(
-            self.finished_tasks,
-            "Finished Tasks",
-            self.checked,
-        )
-
         self.total_task = CTkFrame(
             self,
             corner_radius=25,
@@ -114,16 +101,6 @@ class DashboardTopLevel(CTkToplevel):
             sticky="sew",
             padx=7,
             pady=(0, 10),
-        )
-
-        self.total_tasks_values = self.__db_checkbox.read_all()
-
-        self.total_user_tasks = [_ for _ in self.total_tasks_values if _[2] == username]
-
-        self.make_lbl(
-            self.total_task,
-            "Total Tasks",
-            len(self.total_user_tasks),
         )
 
         self.unfinished_tasks = CTkFrame(
@@ -138,38 +115,98 @@ class DashboardTopLevel(CTkToplevel):
             pady=(0, 10),
         )
 
-        self.unchecked = len([_ for _ in self.checked_or_not if _ == 0])
-
-        self.make_lbl(
-            self.unfinished_tasks,
-            "Unfinished Tasks",
-            self.unchecked,
-        )
+        self.refresh_dashboard()
 
     def make_lbl(
         self,
-        president: CTkFrame,
+        parent_frame: CTkFrame,
         title: str,
-        values: int | None = None,
+        value: int,
     ):
         title_lbl = CTkLabel(
-            president,
+            parent_frame,
             text=title,
         )
         title_lbl.pack()
 
-        if values is None:
-            value_lbl = CTkLabel(
-                president,
-                text="it's don't work cause beta",
-            )
-        else:
-            value_lbl = CTkLabel(
-                president,
-                text=values,
-            )
-
+        value_lbl = CTkLabel(
+            parent_frame,
+            text=value,
+        )
         value_lbl.pack()
+
+    def refresh_dashboard(self, e=None):
+        total_tasks = self.__db.read_user_tasks()
+
+        checkbox_data = self.__db_checkbox.read_all()
+
+        finished_tasks = [
+            row
+            for row in checkbox_data
+            if row[2] == self.username and row[3] == 1
+        ]
+
+        total = len(total_tasks)
+        checked = len(finished_tasks)
+        unchecked = total - checked
+
+        self.finished_tasks.destroy()
+        self.total_task.destroy()
+        self.unfinished_tasks.destroy()
+
+        self.finished_tasks = CTkFrame(
+            self,
+            corner_radius=25,
+        )
+        self.finished_tasks.grid(
+            row=1,
+            column=0,
+            sticky="sew",
+            padx=7,
+            pady=(0, 10),
+        )
+
+        self.make_lbl(
+            self.finished_tasks,
+            "Finished Tasks",
+            checked,
+        )
+
+        self.total_task = CTkFrame(
+            self,
+            corner_radius=25,
+        )
+        self.total_task.grid(
+            row=1,
+            column=1,
+            sticky="sew",
+            padx=7,
+            pady=(0, 10),
+        )
+
+        self.make_lbl(
+            self.total_task,
+            "Total Tasks",
+            total,
+        )
+
+        self.unfinished_tasks = CTkFrame(
+            self,
+            corner_radius=25,
+        )
+        self.unfinished_tasks.grid(
+            row=1,
+            column=2,
+            sticky="sew",
+            padx=7,
+            pady=(0, 10),
+        )
+
+        self.make_lbl(
+            self.unfinished_tasks,
+            "Unfinished Tasks",
+            unchecked,
+        )
 
     def log_out(self):
         self.destroy()

@@ -11,7 +11,7 @@ from todo_app.paths import get_database_path
 
 class AllAboutTask(CTkToplevel):
     def __init__(
-        self, task_id, task, about_task, show_task_frame_instance, *args, **kwargs
+        self, task_id, task, about_task, show_task_frame_instance, username, *args, **kwargs
     ):
         super().__init__(*args, **kwargs)
 
@@ -75,6 +75,9 @@ class AllAboutTask(CTkToplevel):
         task_text = self.task_input.get()
         about_task = self.about_task_text_box.get("0.0", "end-1c")
 
+        if task_text == self.place_holder_task:
+            task_text = ''
+
         if task_text.replace(" ", ""):
             self.__db.edit_column(self.task_id, task_text, about_task)
             self.show_task_frame.refresh_tasks()
@@ -101,7 +104,7 @@ Task title:
 {self.task_input.get()}
 
 Task details:
-{self.about_task_text_box.get('0.0', 'end')}
+{self.about_task_text_box.get("0.0", "end")}
 
 Instructions:
 - Treat the provided text as a task, not as a puzzle or text-analysis problem.
@@ -117,11 +120,13 @@ Instructions:
             api_key=os.getenv("api"),
         )
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
-        )
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+            )
 
-        showinfo("gpt-4o-mini", response.choices[0].message.content)
+            showinfo("gpt-4o-mini", response.choices[0].message.content)
+
+        except Exception as e:
+            showerror("error", "the error is about internet or api")

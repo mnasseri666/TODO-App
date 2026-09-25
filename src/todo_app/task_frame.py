@@ -28,6 +28,7 @@ class TaskFrame(CTkFrame):
         self.about_task = about_task
         self.on_remove_task = on_remove_task
         self.show_task_frame = show_task_frame_instance
+        self.username = username
 
         self.__db_checkbox = CheckBoxDb(get_database_path(), username, task_id)
 
@@ -62,7 +63,6 @@ class TaskFrame(CTkFrame):
         self.all_about_task_root = None
 
     def add_to_database_checked(self):
-        # TODO: fix the app when user select or deselect dashboard refresh without the dashboard close
         if self.check_box.get():
             self.__db_checkbox.add_checked(self.task_id)
 
@@ -70,12 +70,11 @@ class TaskFrame(CTkFrame):
             self.__db_checkbox.remove_checked(self.task_id)
 
     def remove_task(self):
+        self.__db_checkbox.delete_task(self.task_id)
+        self.__db.remove(self.task_id)
+
         if self.on_remove_task:
             self.on_remove_task(self.task_id)
-
-            self.__db_checkbox.delete_task(self.task_id)
-
-            self.__db.remove(self.task_id)
 
     def open_about_task(self):
         if (
@@ -83,7 +82,7 @@ class TaskFrame(CTkFrame):
             or not self.all_about_task_root.winfo_exists()
         ):
             self.all_about_task_root = AllAboutTask(
-                self.task_id, self.task_text, self.about_task, self.show_task_frame
+                self.task_id, self.task_text, self.about_task, self.show_task_frame, self.username
             )
 
         else:
