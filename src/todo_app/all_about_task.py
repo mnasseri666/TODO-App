@@ -96,23 +96,11 @@ class AllAboutTask(CTkToplevel):
 
     def advice(self):
         prompt = f"""
-You are an AI assistant inside a Todo application.
 
-Your job is to give practical and useful advice for completing the user's task.
-
-Task title:
 {self.task_input.get()}
 
 Task details:
 {self.about_task_text_box.get("0.0", "end")}
-
-Instructions:
-- Treat the provided text as a task, not as a puzzle or text-analysis problem.
-- Focus on helping the user complete the task.
-- Give clear, practical, and actionable advice.
-- If the task is vague, briefly explain what information is missing and suggest how to make the task more specific.
-- Do not analyze the spelling, letters, repeated characters, or structure of the text unless the task explicitly asks you to do so.
-- Do not invent requirements that are not present in the task.
 """
         load_dotenv()
         client = OpenAI(
