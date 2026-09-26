@@ -96,10 +96,7 @@ class AllAboutTask(CTkToplevel):
 
     def advice(self):
         prompt = f"""
-
 {self.task_input.get()}
-
-Task details:
 {self.about_task_text_box.get("0.0", "end")}
 """
         load_dotenv()
