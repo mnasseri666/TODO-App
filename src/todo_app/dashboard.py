@@ -115,7 +115,7 @@ class DashboardTopLevel(CTkToplevel):
             pady=(0, 10),
         )
 
-        self.refresh_dashboard()
+        self.bind('<FocusIn>', self.refresh_dashboard)
 
     def make_lbl(
         self,
