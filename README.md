@@ -1,11 +1,13 @@
 # Task Manager
 
-A desktop task manager built with **CustomTkinter** and **SQLite**. Users can register, log in securely, and manage their own tasks through a simple graphical interface.
+A desktop task manager built with **CustomTkinter** and **SQLite**. Users can register, log in, and manage their own tasks through a simple graphical interface.
+
+#### Video Demo: https://youtu.be/YOUR_VIDEO_ID
 
 ## Features
 
 * User registration with input validation
-* Password hashing for secure authentication
+* Password hashing for authentication
 * Per-user task isolation
 * Add, edit, search, and delete tasks
 * Task titles and optional descriptions
@@ -101,7 +103,7 @@ Enter your username and password on the login screen.
 
 Each user's tasks are isolated from other users.
 
-### 3. Manage tasks
+### 3. Manage Tasks
 
 After logging in, you can:
 
@@ -114,7 +116,7 @@ After logging in, you can:
 
 ### 4. AI Task Advice
 
-The task details window includes an **"advice with AI"** feature that can provide practical suggestions for completing a task.
+The task details window includes an **"advice with AI"** feature that provides practical suggestions for completing a task.
 
 The AI feature requires an API key configured through an environment variable.
 
@@ -135,23 +137,45 @@ src/
     ├── login.py              # Login window and application entry point
     ├── register.py           # User registration and validation
     ├── mainApp.py            # Main application window
-    ├── show_task_frames.py    # Task list, search, and task management
+    ├── show_task_frames.py   # Task list, search, and task management
     ├── task_frame.py         # Individual task widget
-    ├── add_task.py            # Add-task dialog
-    ├── all_about_task.py      # Task details, editing, and AI advice
-    ├── dashboard.py           # Dashboard and task statistics
-    ├── paths.py               # Local database path resolution
+    ├── add_task.py           # Add-task dialog
+    ├── all_about_task.py     # Task details, editing, and AI advice
+    ├── dashboard.py          # Dashboard and task statistics
+    ├── paths.py              # Local database path resolution
     │
     └── database/
         ├── __init__.py
-        ├── userdatabase.py    # User database and authentication
-        ├── tasks_database.py  # Task database operations
-        └── check_box_db.py    # Task completion status
+        ├── userdatabase.py   # User database and authentication
+        ├── tasks_database.py # Task database operations
+        └── check_box_db.py   # Task completion status
 ```
+
+### Main Files
+
+**`login.py`** handles the login interface and serves as the application's main entry point.
+
+**`register.py`** provides the registration interface and validates new user information.
+
+**`mainApp.py`** creates the main application window after successful authentication.
+
+**`show_task_frames.py`** displays the user's tasks and handles task searching and management.
+
+**`task_frame.py`** provides the graphical widget used to display individual tasks.
+
+**`add_task.py`** provides the interface for creating new tasks.
+
+**`all_about_task.py`** displays task details, allows editing, and provides the optional AI advice feature.
+
+**`dashboard.py`** displays statistics about the user's tasks.
+
+**`paths.py`** determines the location used for the application's local database.
+
+The files inside `database/` handle user authentication data, task data, and task completion status.
 
 ## Database
 
-The application uses SQLite for local data storage.
+The application uses **SQLite** for local data storage.
 
 The database is created automatically when the application runs.
 
@@ -161,9 +185,23 @@ On Windows, the database is stored at:
 %APPDATA%\TODO-App\database.db
 ```
 
-The database contains information for users, tasks, and task completion status.
+The database contains information related to users, tasks, and task completion status.
 
 Database files are excluded from Git through `.gitignore`.
+
+## Design Decisions
+
+I chose **CustomTkinter** because this project is designed as a desktop application and I wanted to build the graphical interface directly in Python without requiring a web server or browser.
+
+I chose **SQLite** because the application is intended to be a local desktop task manager. SQLite provides a simple database system without requiring a separate database server.
+
+The database is stored in the user's application-data directory rather than inside the project directory. This keeps application data separate from the source code and allows each installation to maintain its own local database.
+
+Passwords are stored as hashes rather than plaintext passwords so that the database does not directly contain users' passwords.
+
+The application is divided into separate modules for authentication, registration, task management, task details, the dashboard, and database operations. This separation keeps different responsibilities organized and makes the project easier to maintain.
+
+The optional AI feature is kept separate from the core task-management functionality so that the application can still be used without an AI API key.
 
 ## Build Executable
 
@@ -199,7 +237,7 @@ The optional AI feature requires an API key:
 api=your_api_key_here
 ```
 
-Keep API keys private and never commit them to the repository.
+Keep API keys private and never commit them to Git.
 
 ## Known Limitations
 
