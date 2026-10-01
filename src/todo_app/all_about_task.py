@@ -11,13 +11,20 @@ from todo_app.paths import get_database_path
 
 class AllAboutTask(CTkToplevel):
     def __init__(
-        self, task_id, task, about_task, show_task_frame_instance, username, *args, **kwargs
+        self,
+        task_id,
+        task,
+        about_task,
+        show_task_frame_instance,
+        username,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
         self.geometry("500x500")
 
-        self.__db = TasksDatabase(get_database_path())
+        self.__db = TasksDatabase(get_database_path(), username)
 
         self.task_text = task
         self.about_task = about_task
@@ -72,20 +79,24 @@ class AllAboutTask(CTkToplevel):
             self.about_task_text_box.insert("0.0", self.place_holder_task)
 
     def edit(self):
-        task_text = self.task_input.get()
+        task_text = self.task_input.get().strip()
         about_task = self.about_task_text_box.get("0.0", "end-1c")
 
-        if task_text == self.place_holder_task:
-            task_text = ''
+        if not task_text:
+            showerror('error', 'u have to fill subject task!!!')
+            return
 
-        if task_text.replace(" ", ""):
-            self.__db.edit_column(self.task_id, task_text, about_task)
+        if about_task == self.place_holder_task:
+            about_task = ""
+
+        edited = self.__db.edit_column(self.task_id, task_text, about_task)
+
+        if edited:
+            showinfo('edited', 'ur task successfully edited')
             self.show_task_frame.refresh_tasks()
-            showinfo("edited!!!", "ur task successfully edited")
             self.destroy()
-
         else:
-            showerror("error", "u must fill task subject")
+            showerror('error', 'an error bout database or anything else')
 
     def task_exception(self, e):
         if self.task_input.get().replace(" ", ""):

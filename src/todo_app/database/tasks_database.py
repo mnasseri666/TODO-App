@@ -53,7 +53,7 @@ class TasksDatabase:
 
     def edit_column(self, task_id, text, about_text):
         with connect(self.filename, timeout=10) as conn:
-            conn.execute(
+            cursor = conn.execute(
                 """
                 UPDATE task
                 SET text = ?, about_text = ?
@@ -61,6 +61,8 @@ class TasksDatabase:
                 """,
                 (text, about_text, task_id, self.username),
             )
+
+            return cursor.rowcount > 0 
 
     def read_user_tasks(self):
         if not self.username:

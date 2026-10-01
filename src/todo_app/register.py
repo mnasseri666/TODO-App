@@ -180,9 +180,9 @@ class Register(CTkToplevel):
     def get_random_pass(self):
         length = 10
 
-        charecters = string.ascii_letters + string.digits
+        characters = string.ascii_letters + string.digits
 
-        password = "".join(secrets.choice(charecters) for _ in range(length))
+        password = "".join(secrets.choice(characters) for _ in range(length))
         if password.isalpha() or password.isnumeric():
             self.get_random_pass()
 
