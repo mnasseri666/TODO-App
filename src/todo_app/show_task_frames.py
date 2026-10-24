@@ -4,6 +4,7 @@ from todo_app.add_task import AddTask
 from todo_app.dashboard import DashboardTopLevel
 from todo_app.database.tasks_database import TasksDatabase
 from todo_app.paths import get_database_path
+from todo_app.sorter import Sorter
 from todo_app.task_frame import TaskFrame
 
 
@@ -19,6 +20,7 @@ class ShowTasksFrame(CTkFrame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=12)
         self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
 
         self.search_input = CTkEntry(
             self, corner_radius=25, placeholder_text="search the task", width=580
@@ -27,8 +29,13 @@ class ShowTasksFrame(CTkFrame):
 
         self.search_input.bind("<KeyRelease>", self.search)
 
+        self.sort_radio_btn = CTkOptionMenu(
+            self, values=["alphabet", "date"], corner_radius=25, command=self.sort
+        )
+        self.sort_radio_btn.grid(column=2, row=0, sticky="s", pady=10)
+
         self.add_button = CTkButton(self, text="+", command=self.open_add)
-        self.add_button.grid(column=2, row=0, sticky="e", pady=10, padx=(0, 10))
+        self.add_button.grid(column=3, row=0, sticky="e", pady=10, padx=(0, 10))
 
         self.open_dashboard_btn = CTkButton(
             self, text="open dashboard", command=self.open_dashboard
@@ -84,7 +91,7 @@ class ShowTasksFrame(CTkFrame):
                 self.username,
             )
             task_frame.grid(
-                column=0, columnspan=3, row=row_index, pady=5, padx=20, sticky="nsew"
+                column=0, columnspan=4, row=row_index, pady=5, padx=20, sticky="nsew"
             )
 
             self.task_widgets[task_id] = task_frame
@@ -108,13 +115,48 @@ class ShowTasksFrame(CTkFrame):
         for task in self.task_widgets.values():
             if text in task.task_text.lower():
                 task.grid(
-                    row=row, column=0, columnspan=3, padx=20, pady=5, sticky="nsew"
+                    row=row, column=0, columnspan=4, padx=20, pady=5, sticky="nsew"
                 )
 
                 row += 1
 
             else:
                 task.grid_forget()
+
+    def sort(self, choice):
+        tasks = self.__db.read_user_tasks()
+        sorter = Sorter(tasks)
+
+        row = 0
+
+        if choice == "alphabet":
+            sorted_ = sorter.alphabet()
+
+            for row, task in enumerate(sorted_, start=1):
+                task_id = str(task[0])
+                task_frame = self.task_widgets.get(task_id)
+
+                if task_frame:
+                    task_frame.grid(
+                        row=row,
+                        column=0,
+                        columnspan=4,
+                        padx=20,
+                        pady=5,
+                        sticky="nsew",
+                    )
+
+        elif choice == "date":
+            sorted_ = sorter.time()
+
+            for row, task in enumerate(sorted_, start=1):
+                task_id = str(task[0])
+                task_frame = self.task_widgets.get(task_id)
+
+                if task_frame:
+                    task_frame.grid(
+                        row=row, column=0, columnspan=4, padx=20, pady=5, sticky="nsew"
+                    )
 
     def open_dashboard(self):
         if self.dashboard_root is None or not self.dashboard_root.winfo_exists():

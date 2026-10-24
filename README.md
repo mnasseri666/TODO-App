@@ -128,6 +128,9 @@ api=your_api_key_here
 
 Do not commit `.env` or any API key to Git.
 
+### 5. sort
+in the main app is 2 choice for sort your task like sort as time or alphabet
+
 ## Project Structure
 
 ```text
