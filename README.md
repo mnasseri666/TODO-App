@@ -2,7 +2,7 @@
 
 A desktop task manager built with **CustomTkinter** and **SQLite**. Users can register, log in, and manage their own tasks through a simple graphical interface.
 
-#### Video Demo: https://youtu.be/YOUR_VIDEO_ID
+#### Video Demo: [https://youtu.be/YOUR_VIDEO_ID](https://www.youtube.com/watch?v=bYRxE4djgkQ)
 
 ## Features
 
